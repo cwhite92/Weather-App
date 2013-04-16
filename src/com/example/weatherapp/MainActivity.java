@@ -1,52 +1,46 @@
 package com.example.weatherapp;
 
-import com.example.myfirstapp.R;
+import java.util.ArrayList;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
-public class MainActivity extends Activity {
+import com.example.b3weather.R;
 
-	Button btnFindLocation;
-	
+public class MainActivity extends Activity {	
 	// Holds an instance of the GPSTracker class
 	GPSTracker gps;
+	
+	// Holds an instance of the Darksky API
+	Darksky darksky;
+	
+	// Holds weather data for the next 7 days
+	ArrayList<Forecast> weeklyForecast;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        // Get an instance of the button
-        btnFindLocation = (Button) findViewById(R.id.btnFindLocation);
+        weeklyForecast = new ArrayList<Forecast>();
         
-        // Find location button onClick event
-        btnFindLocation.setOnClickListener(new View.OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                gps = new GPSTracker(MainActivity.this);
-                
-                // Check if GPS is enabled
-                if (gps.canGetLocation()) {
-                    double latitude = gps.getLatitude();
-                    double longitude = gps.getLongitude();
-                    
-                    Toast.makeText(getApplicationContext(), "Latitude: " + latitude + " // Longitude: " + longitude, Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Unable to get location. :(", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+        // Instantiate GPS object
+        gps = new GPSTracker(MainActivity.this);
         
-        GPSTracker gps = new GPSTracker(this);
-        if (gps.canGetLocation()) {
-            
+        // Check if GPS is enabled
+        if (gps.canGetLocation()) {            
+            Toast.makeText(getApplicationContext(), "Latitude: " + gps.getLatitude() + " // Longitude: " + gps.getLongitude(), Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getApplicationContext(), "Unable to get location. :(", Toast.LENGTH_LONG).show();
         }
+        
+        // Set up API requester with location data
+        darksky = new Darksky(gps.getLatitude(), gps.getLongitude());
+        
+        darksky.getWeeklyForecast();
     }
 
     @Override

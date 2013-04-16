@@ -45,13 +45,13 @@ public class GPSTracker extends Service implements LocationListener {
             // Get the GPS status
             isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
  
-            // Also get the network status
+            // Also get the network status 
             isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
  
             if (!isGPSEnabled && !isNetworkEnabled) {
                 // Since nothing is enabled we won't be able to get the users location... :(
             } else {
-                this.canGetLocation = true;
+                canGetLocation = true;
                 
                 // First get the location from the network provider
                 if (isNetworkEnabled) {
@@ -84,7 +84,7 @@ public class GPSTracker extends Service implements LocationListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
- 
+        
         return location;
     }
     
